@@ -1,5 +1,6 @@
 package com.amex.productservice.serviceimpl;
 
+import com.amex.productservice.config.exception.ProductNotFoundException;
 import com.amex.productservice.dto.ProductResponse;
 import com.amex.productservice.model.Category;
 import com.amex.productservice.model.Product;
@@ -24,8 +25,11 @@ public class FakeStoreProductService implements ProductService {
 
     //Version 1 of the GET method
    @Override
-    public Product getProductById(Long id) {
+    public Product getProductById(Long id) throws ProductNotFoundException {
         ProductResponse productResponse =  restTemplate.getForObject("https://fakestoreapi.com/products/{id}", ProductResponse.class, id);
+      if (productResponse == null) {
+            throw new ProductNotFoundException("Product with id " + id + " not found");
+        }
         return convertProductResponseToProduct(productResponse);
     }
 
